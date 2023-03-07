@@ -1,0 +1,21 @@
+{
+    "name": "lukelt/series",
+    "description": "Apenas um simples API Rest de series",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Lukelt\\Api\\": "src/"
+        },
+        "files": [
+            "environment.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Lukelt"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv": "^5.5"
+    }
+}
