@@ -1,12 +1,11 @@
 <?php
 
-use Lukelt\Api\Models\Serie;
+header("Content-type: application/json; charset=utf-8");
 
 require __DIR__ . '/vendor/autoload.php';
 
 if (isset($_SERVER['PATH_INFO'])) {
-    $url = explode('/', $_SERVER['PATH_INFO']);
-    
+    $url = array_filter(explode('/', $_SERVER['PATH_INFO']));
     
     if ($url[1] === 'api') {
         $service = 'Lukelt\Api\Controller\\' . ucfirst($url[2]) . 'Service';
@@ -20,7 +19,7 @@ if (isset($_SERVER['PATH_INFO'])) {
             echo json_encode([
                 'status' => 'sucess',
                 'data' => $response
-            ]);
+            ], JSON_UNESCAPED_UNICODE);
             
             exit();
         } catch (\Throwable $th) {
@@ -28,7 +27,7 @@ if (isset($_SERVER['PATH_INFO'])) {
             echo json_encode([
                 'status' => 'error',
                 'data' => $th->getMessage()
-            ]);
+            ], JSON_UNESCAPED_UNICODE);
 
             exit();
         }

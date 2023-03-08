@@ -17,11 +17,11 @@ class Serie {
         $stm->bindValue(':id', $id, PDO::PARAM_INT);
         $stm->execute();
 
-        $date = $stm->fetch(PDO::FETCH_ASSOC);
-        if(!is_array($date))
+        $data = $stm->fetch(PDO::FETCH_ASSOC);
+        if(!is_array($data))
             throw new Exception("Nenhuma serie encontrada!");
 
-        return $date;
+        return $data;
     }
 
     public static function all()
@@ -30,10 +30,27 @@ class Serie {
 
         $stm = $connection->query("SELECT * FROM " . self::$table);
 
-        $date = $stm->fetchAll(PDO::FETCH_ASSOC);
-        if(!is_array($date))
+        $data = $stm->fetchAll(PDO::FETCH_ASSOC);
+        if(!is_array($data))
             throw new Exception("Nenhuma serie encontrada!");
 
-        return $date;
+        return $data;
+    }
+
+    public static function insert($data)
+    {
+        $connection = new PDO('sqlite: ./../db.sqlite');
+
+        $sql = "INSERT INTO " . self::$table . "(name, season, episode) VALUES (:name, :season, :episode)";
+        $stm = $connection->prepare($sql);
+        $stm->bindValue(':name', $data['name']);
+        $stm->bindValue(':season', $data['season']);
+        $stm->bindValue(':episode', $data['episode']);
+        $stm->execute();
+
+        if ($stm->rowCount() <= 0)
+            throw new Exception("Ocorreu um error ao inserir a serie!");
+
+        return "Serie inserida com sucesso!";
     }
 }

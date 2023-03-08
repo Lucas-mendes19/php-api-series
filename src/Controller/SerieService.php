@@ -15,7 +15,9 @@ class SerieService {
 
     public function post()
     {
+        $data = $_POST;
 
+        return Serie::insert($data);
     }
 
     public function update()
