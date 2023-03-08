@@ -9,10 +9,26 @@ if (isset($_SERVER['PATH_INFO'])) {
     
     
     if ($url[1] === 'api') {
-        // api
+        $service = 'Lukelt\Api\Controller\\' . ucfirst($url[2]) . 'Service';
+        $method = strtolower($_SERVER['REQUEST_METHOD']);
+        $arg = $url[3] ?? null;
+        
+        try {
+            $response = call_user_func_array([new $service, $method], [$arg]);
+
+            echo json_encode([
+                'status' => 'sucess',
+                'data' => $response
+            ]);
+            
+            exit();
+        } catch (\Throwable $th) {
+            echo json_encode([
+                'status' => 'error',
+                'data' => $th->getMessage()
+            ]);
+
+            exit();
+        }
     }
 }
-
-$serie = new Serie();
-
-print_r($serie->get(1));

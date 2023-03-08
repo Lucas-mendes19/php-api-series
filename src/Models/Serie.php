@@ -2,20 +2,38 @@
 
 namespace Lukelt\Api\Models;
 
+use Exception;
 use PDO;
 
 class Serie {
 
-    private string $table = 'serie';
+    private static string $table = 'serie';
 
-    public function get(int $id)
+    public static function select(int $id)
     {
         $connection = new PDO('sqlite: ./../db.sqlite');
 
-        $sql = $connection->prepare("SELECT * FROM {$this->table} WHERE id = :id;");
-        $sql->bindValue(':id', $id, PDO::PARAM_INT);
-        $sql->execute();
+        $stm = $connection->prepare("SELECT * FROM " . self::$table . " WHERE id = :id;");
+        $stm->bindValue(':id', $id, PDO::PARAM_INT);
+        $stm->execute();
 
-        return $sql->fetch(PDO::FETCH_ASSOC);
+        $date = $stm->fetch(PDO::FETCH_ASSOC);
+        if(!is_array($date))
+            throw new Exception("Nenhuma serie encontrada!");
+
+        return $date;
+    }
+
+    public static function all()
+    {
+        $connection = new PDO('sqlite: ./../db.sqlite');
+
+        $stm = $connection->query("SELECT * FROM " . self::$table);
+
+        $date = $stm->fetchAll(PDO::FETCH_ASSOC);
+        if(!is_array($date))
+            throw new Exception("Nenhuma serie encontrada!");
+
+        return $date;
     }
 }
