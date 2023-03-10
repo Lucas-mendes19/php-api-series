@@ -4,20 +4,28 @@ namespace Lukelt\Api\Controller;
 
 use Lukelt\Api\Models\Serie;
 
-class SerieService {
+class SerieService
+{
+    private Serie $serie;
+
+    public function __construct()
+    {
+        $this->serie = new Serie();
+    }
+
     public function get(int $id = null)
     {
         if (isset($id))
-            return Serie::select($id);
+            return $this->serie->select($id);
 
-        return Serie::all();
+        return $this->serie->all();
     }
 
     public function post()
     {
         $data = $_POST;
 
-        return Serie::insert($data);
+        return $this->serie->insert($data);
     }
 
     public function update()

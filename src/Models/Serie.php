@@ -5,15 +5,21 @@ namespace Lukelt\Api\Models;
 use Exception;
 use PDO;
 
-class Serie {
+class Serie
+{
+    private readonly string $table;
+    private readonly PDO $conn;
 
-    private static string $table = 'serie';
+    public function __construct() {
+        $this->table = 'serie';
 
-    public static function select(int $id)
+        $connection = new Connection();
+        $this->conn = $connection->link;
+    }
+
+    public function select(int $id): array
     {
-        $connection = new PDO('sqlite: ./../db.sqlite');
-
-        $stm = $connection->prepare("SELECT * FROM " . self::$table . " WHERE id = :id;");
+        $stm = $this->conn->prepare("SELECT * FROM {$this->table} WHERE id = :id;");
         $stm->bindValue(':id', $id, PDO::PARAM_INT);
         $stm->execute();
 
@@ -24,11 +30,9 @@ class Serie {
         return $data;
     }
 
-    public static function all()
+    public function all(): array
     {
-        $connection = new PDO('sqlite: ./../db.sqlite');
-
-        $stm = $connection->query("SELECT * FROM " . self::$table);
+        $stm = $this->conn->query("SELECT * FROM {$this->table};");
 
         $data = $stm->fetchAll(PDO::FETCH_ASSOC);
         if(!is_array($data))
@@ -37,12 +41,11 @@ class Serie {
         return $data;
     }
 
-    public static function insert($data)
+    public function insert($data): string
     {
-        $connection = new PDO('sqlite: ./../db.sqlite');
 
-        $sql = "INSERT INTO " . self::$table . "(name, season, episode) VALUES (:name, :season, :episode)";
-        $stm = $connection->prepare($sql);
+        $sql = "INSERT INTO {$this->table} (name, season, episode) VALUES (:name, :season, :episode)";
+        $stm = $this->conn->prepare($sql);
         $stm->bindValue(':name', $data['name']);
         $stm->bindValue(':season', $data['season']);
         $stm->bindValue(':episode', $data['episode']);
