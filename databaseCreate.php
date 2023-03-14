@@ -9,6 +9,3 @@ $pdo->exec("CREATE TABLE serie (
     season INTEGER,
     episode INTEGER
 )");
-
-
-// $pdo->exec("INSERT INTO serie (name, season, episode) VALUES ('The Last of Us', 1, 7);");

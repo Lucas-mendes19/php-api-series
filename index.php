@@ -8,7 +8,7 @@ if (isset($_SERVER['PATH_INFO'])) {
     $url = array_filter(explode('/', $_SERVER['PATH_INFO']));
     
     if ($url[1] === 'api') {
-        $service = 'Lukelt\Api\Controller\\' . ucfirst($url[2]) . 'Service';
+        $service = 'Lukelt\Api\Controller\\' . ucfirst($url[2]) . 'Controller';
         $method = strtolower($_SERVER['REQUEST_METHOD']);
         $arg = $url[3] ?? null;
 

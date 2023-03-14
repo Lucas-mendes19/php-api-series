@@ -2,28 +2,29 @@
 
 namespace Lukelt\Api\Controller;
 
-use Lukelt\Api\Models\Serie;
+use Lukelt\Api\Infrastructure\Repository\SerieRepository;
 
-class SerieService
+class SerieController
 {
-    private Serie $serie;
+    private SerieRepository $serie;
 
     public function __construct()
     {
-        $this->serie = new Serie();
+        $this->serie = new SerieRepository();
     }
 
     public function get(int $id = null)
     {
         if (isset($id))
-            return $this->serie->select($id);
+            return $this->serie->find($id);
 
         return $this->serie->all();
     }
 
     public function post()
     {
-        $data = $_POST;
+        $request = file_get_contents('php://input');
+        $data = json_decode($request, true) ?: $_POST;
 
         return $this->serie->insert($data);
     }

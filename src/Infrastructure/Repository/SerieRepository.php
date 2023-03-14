@@ -1,25 +1,23 @@
 <?php
 
-namespace Lukelt\Api\Models;
+namespace Lukelt\Api\Infrastructure\Repository;
 
 use Exception;
+use Lukelt\Api\Infrastructure\Persistence\Connection;
+use Lukelt\Api\Entity\Serie;
 use PDO;
 
-class Serie
+class SerieRepository
 {
-    private readonly string $table;
-    private readonly PDO $conn;
+    public readonly string $table;
 
     public function __construct() {
         $this->table = 'serie';
-
-        $connection = new Connection();
-        $this->conn = $connection->link;
     }
 
-    public function select(int $id): array
+    public function find(int $id): Serie
     {
-        $stm = $this->conn->prepare("SELECT * FROM {$this->table} WHERE id = :id;");
+        $stm = Connection::instance()->prepare("SELECT * FROM {$this->table} WHERE id = :id;");
         $stm->bindValue(':id', $id, PDO::PARAM_INT);
         $stm->execute();
 
@@ -27,25 +25,24 @@ class Serie
         if(!is_array($data))
             throw new Exception("Nenhuma serie encontrada!");
 
-        return $data;
+        return Serie::withIdNameSeasonEpísode(...$data);
     }
 
     public function all(): array
     {
-        $stm = $this->conn->query("SELECT * FROM {$this->table};");
+        $stm = Connection::instance()->query("SELECT * FROM {$this->table};");
 
         $data = $stm->fetchAll(PDO::FETCH_ASSOC);
         if(!is_array($data))
             throw new Exception("Nenhuma serie encontrada!");
 
-        return $data;
+        return array_map(fn (array $data) => Serie::withIdNameSeasonEpísode(...$data), $data);
     }
 
     public function insert($data): string
     {
-
-        $sql = "INSERT INTO {$this->table} (name, season, episode) VALUES (:name, :season, :episode)";
-        $stm = $this->conn->prepare($sql);
+        $sql = "INSERT INTO {$this->table} (name, season, episode) VALUES (:name, :season, :episode);";
+        $stm = Connection::instance()->prepare($sql);
         $stm->bindValue(':name', $data['name']);
         $stm->bindValue(':season', $data['season']);
         $stm->bindValue(':episode', $data['episode']);
