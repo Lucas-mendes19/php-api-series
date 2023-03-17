@@ -39,18 +39,46 @@ class SerieRepository
         return array_map(fn (array $data) => Serie::withIdNameSeasonEpísode(...$data), $data);
     }
 
-    public function insert($data): string
+    public function insert(Serie $serie): string
     {
         $sql = "INSERT INTO {$this->table} (name, season, episode) VALUES (:name, :season, :episode);";
         $stm = Connection::instance()->prepare($sql);
-        $stm->bindValue(':name', $data['name']);
-        $stm->bindValue(':season', $data['season']);
-        $stm->bindValue(':episode', $data['episode']);
+        $stm->bindValue(':name', $serie->name);
+        $stm->bindValue(':season', $serie->season);
+        $stm->bindValue(':episode', $serie->episode);
         $stm->execute();
 
         if ($stm->rowCount() <= 0)
-            throw new Exception("Ocorreu um error ao inserir a serie!");
+            throw new Exception("Ocorreu um error ao inserir serie!");
 
         return "Serie inserida com sucesso!";
+    }
+
+    public function update(Serie $serie): string
+    {
+        $sql = "UPDATE {$this->table} SET name = :name, season = :season, episode = :episode WHERE id = :id;";
+        $stm = Connection::instance()->prepare($sql);
+        $stm->bindValue(':name', $serie->name);
+        $stm->bindValue(':season', $serie->season);
+        $stm->bindValue(':episode', $serie->episode);
+        $stm->bindValue(':id', $serie->id, PDO::PARAM_INT);
+        $stm->execute();
+
+        if ($stm->rowCount() <= 0)
+            throw new Exception("Ocorreu um error ao editar serie!");
+
+        return "Serie editada com sucesso!";
+    }
+
+    public function delete($id): string
+    {
+        $stm = Connection::instance()->prepare("DELETE FROM {$this->table} WHERE id = :id;");
+        $stm->bindValue(':id', $id, PDO::PARAM_INT);
+        $stm->execute();
+
+        if ($stm->rowCount() <= 0)
+            throw new Exception("Ocorreu um erro ao excluir serie!");
+
+        return "Serie excluida com sucesso!";
     }
 }
